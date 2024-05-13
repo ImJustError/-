@@ -1,8 +1,10 @@
 #include "tree.h"
 
+node* findmin(node* parentnode);
 
-node init() {
+node init(node* parent) {
 	node parentnode = { 0 };
+	parentnode.parent = parent;
 	return parentnode;
 }
 
@@ -24,6 +26,7 @@ void* memalloc(int size) {
 
 
 
+
 int addel(node* parentnode, int data) {
 	if (!parentnode->data) {
 		parentnode->data = memalloc(sizeof(int));
@@ -35,7 +38,7 @@ int addel(node* parentnode, int data) {
 		if (!parentnode->left) {
 			parentnode->left = memalloc(sizeof(node));
 			if (!parentnode->left)return 0;
-			*parentnode->left = init();
+			*parentnode->left = init(parentnode);
 		}
 		return addel(parentnode->left, data);
 	}
@@ -43,7 +46,7 @@ int addel(node* parentnode, int data) {
 		if (!parentnode->right) {
 			parentnode->right = memalloc(sizeof(node));
 			if (!parentnode->right)return 0;
-			*parentnode->right = init();
+			*parentnode->right = init(parentnode);
 		}
 		return addel(parentnode->right, data);
 	}
@@ -51,11 +54,11 @@ int addel(node* parentnode, int data) {
 }
 
 
-int findel(node* parentnode, int data) {
+node* findel(node* parentnode, int data) {
 	if (*parentnode->data == data) {
-		return 1;
+		return parentnode;
 	}
-	else if (*parentnode->data >= data) {
+	else if (*parentnode->data > data) {
 		if (!parentnode->left)return 0;
 		return findel(parentnode->left, data);
 	}
@@ -67,4 +70,45 @@ int findel(node* parentnode, int data) {
 }
 
 
+
+int deleteFunc(node* parentnode, int data) {
+	
+	
+	node* MoiNode = findel(parentnode, data);
+	if (!MoiNode->left && !MoiNode->right) {
+		*MoiNode->parent->data = data;
+		free(MoiNode->data);
+		if (MoiNode == MoiNode->parent->left)MoiNode->parent->left = 0;
+		if (MoiNode == MoiNode->parent->right)MoiNode->parent->right = 0;
+		return 1;
+	}
+	else {
+		node* min = findmin(MoiNode->right);
+		*MoiNode->data = *min->data;
+		return deleteFunc(min, *min->data);
+	}
+
+
+}
+
+
+node* findmin(node* parentnode) {
+
+	if (!parentnode->left) {
+		return parentnode;
+	}
+	else {
+		return findmin(parentnode->left);
+	}
+}
+
+
+int printDerevo(node* derevo) {
+	if (!derevo) {
+		return 0;
+	}
+	else printf("%d", *derevo->data);
+	printDerevo(derevo->left);
+	printDerevo(derevo->right);
+}
 
