@@ -107,6 +107,14 @@ int printDerevo(node* derevo) {
 	if (!derevo) {
 		return 0;
 	}
+	else printf("%d", *derevo->data);
+	printDerevo(derevo->left);
+	printDerevo(derevo->right);
+}
+int printDerevo(node* derevo) {
+	if (!derevo) {
+		return 0;
+	}
 	else printf("  %d  ", *derevo->data);
 	printDerevo(derevo->left);
 	printDerevo(derevo->right);
